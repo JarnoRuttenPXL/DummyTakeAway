@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite</title>
+    <meta name="description" content="Easily order your favorite dishes at QuickBite.">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <div class="header-content">
+        <div class="brand">
+            <h1>QuickBite</h1>
+            <p class="tagline">Quick order • Freshly prepared</p>
+        </div>
+
+        <nav aria-label="Main navigation">
+            <button type="button" id="btn-home" class="nav-btn active">Menu</button>
+            <button type="button" id="btn-cart" class="nav-btn">
+                Shopping cart (<span id="cart-count">0</span>)
+            </button>
+            <button type="button" id="btn-login" class="nav-btn">Admin login</button>
+            <span id="admin-badge" class="admin-badge hidden" aria-label="You are logged in as an admin">Admin</span>
+        </nav>
+    </div>
+</header>
+
+<div id="notification" class="notification hidden" role="status" aria-live="polite"></div>
+
+<main class="container">
+    <div id="page-home" class="page active">
+        <div id="dish-of-day" class="dish-of-day">
+            <h2>Dish of day</h2>
+            <h3 id="dotd-name"></h3>
+            <p id="dotd-description"></p>
+            <p id="dotd-price" class="dotd-price"></p>
+            <button type="button" id="btn-edit-dotd" class="btn-edit hidden">Edit</button>
+        </div>
+
+        <div class="filters" aria-label="Filters for the menu">
+            <div class="filter-group">
+                <label for="filter-veggie">Filter:</label>
+                <select id="filter-veggie">
+                    <option value="all">All</option>
+                    <option value="veggie">Veggie</option>
+                    <option value="non-veggie">Non-veggie</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort-price">Sort by price:</label>
+                <select id="sort-price">
+                    <option value="none">none</option>
+                    <option value="asc">Low to high</option>
+                    <option value="desc">High to low</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="menu-container"></div>
+    </div>
+
+    <div id="page-cart" class="page">
+        <h2>Your shopping cart</h2>
+
+        <div id="cart-items"></div>
+
+        <div id="cart-empty" class="cart-empty hidden">
+            <p>Your shopping cart is empty.</p>
+        </div>
+
+        <div id="promo-section" class="promo-section hidden">
+            <h3>Promo code</h3>
+            <div class="promo-input-group">
+                <input type="text" id="promo-code" placeholder="Enter a promo code">
+                <button type="button" id="btn-apply-promo" class="btn">Apply</button>
+            </div>
+            <p id="promo-message" class="promo-message hidden"></p>
+        </div>
+
+        <div id="cart-total" class="cart-total hidden">
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span id="subtotal">€0,00</span>
+            </div>
+
+            <div id="discount-row" class="total-row discount-row hidden">
+                <span>Discount:</span>
+                <span id="discount">-€0,00</span>
+            </div>
+
+            <div class="total-row total-final">
+                <span>Total:</span>
+                <span id="total">€0,00</span>
+            </div>
+
+            <button type="button" id="btn-order" class="btn btn-order">Place order</button>
+        </div>
+    </div>
+
+    <div id="page-login" class="page">
+        <div class="login-container">
+            <h2>Admin login</h2>
+
+            <div class="login-form">
+                <input type="text" id="login-username" placeholder="Username" autocomplete="username">
+                <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+                <button type="button" id="btn-login-submit" class="btn">Login</button>
+                <p class="login-hint">Tip: admin / admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-edit-dish" class="page">
+        <div class="edit-container">
+            <h2>Edit dish of the day</h2>
+
+            <div class="edit-form">
+                <div class="form-group">
+                    <label for="edit-dish-select">Choose an existing dish:</label>
+                    <select id="edit-dish-select">
+                        <option value="">-- New dish --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-name">Name:</label>
+                    <input type="text" id="edit-name">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-price">Price:</label>
+                    <input type="number" id="edit-price" step="0.01" inputmode="decimal">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-description">Description:</label>
+                    <textarea id="edit-description" rows="4"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="btn-save-dish" class="btn btn-success">Save</button>
+                    <button type="button" id="btn-cancel-edit" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-dish-detail" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-dish-name">
+        <div class="modal-content">
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+
+            <h2 id="modal-dish-name"></h2>
+            <p id="modal-dish-ingredients" class="dish-ingredients"></p>
+            <p id="modal-dish-price" class="dish-price"></p>
+
+            <div id="modal-options" class="dish-options"></div>
+
+            <div class="modal-total">
+                <span>Totalprice</span>
+                <span id="modal-total-price">€0,00</span>
+            </div>
+
+            <button type="button" id="btn-add-to-cart-modal" class="btn btn-add">Add to cart</button>
+        </div>
+    </div>
+</main>
+</body>
+</html>
